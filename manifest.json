@@ -1,0 +1,12 @@
+{
+  "manifest_version": 2,
+  "name": "GitHub Repo Size",
+  "version": "1.0",
+  "permissions": ["activeTab", "https://api.github.com/"],
+  "content_scripts": [
+    {
+      "matches": ["*://github.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
