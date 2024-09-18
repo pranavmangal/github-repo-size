@@ -89,7 +89,7 @@ function addToSidebar(value, unit) {
   }
 }
 
-(function () {
+function init() {
   const pathParts = window.location.pathname.split("/");
 
   // Check if the URL matches the GitHub repo format
@@ -120,4 +120,15 @@ function addToSidebar(value, unit) {
         console.error("Unable to fetch repo size", error);
       });
   }
-})();
+}
+
+init();
+
+let lastUrl = location.href;
+new MutationObserver(() => {
+  const url = location.href;
+  if (url !== lastUrl) {
+    lastUrl = url;
+    init();
+  }
+}).observe(document, { subtree: true, childList: true });

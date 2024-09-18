@@ -1,7 +1,7 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "GitHub Repository Size",
-  "description": "Displays the size of a GitHub repository on it's homepage",
+  "description": "Displays the size of a GitHub repository on its homepage",
   "author": "Pranav Mangal",
   "version": "1.0.0",
   "homepage_url": "https://github.com/pranavmangal/github-repo-size",
@@ -13,7 +13,7 @@
       "id": "github-repository-size@pranavmangal"
     }
   },
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "*://*.github.com/*"],
   "content_scripts": [
     {
       "matches": ["*://*.github.com/*"],
