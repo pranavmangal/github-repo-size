@@ -1,4 +1,4 @@
-function fizeZipSVG(forSidebar) {
+function fileZipSVG(forSidebar) {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   svg.setAttribute(
@@ -41,7 +41,7 @@ function listRepoSize(value, unit) {
   unitElem.className = "color-fg-muted";
   unitElem.textContent = ` ${unit}`;
 
-  anchor.appendChild(fizeZipSVG({ forSidebar: false }));
+  anchor.appendChild(fileZipSVG({ forSidebar: false }));
   anchor.appendChild(valueElem);
   anchor.appendChild(unitElem);
 
@@ -69,7 +69,7 @@ function sidebarRepoSize(value, unit) {
   const valueElem = document.createElement("strong");
   valueElem.textContent = ` ${value}`;
 
-  anchor.appendChild(fizeZipSVG({ forSidebar: true }));
+  anchor.appendChild(fileZipSVG({ forSidebar: true }));
   anchor.appendChild(valueElem);
   anchor.appendChild(document.createTextNode(` ${unit}`));
 
