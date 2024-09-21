@@ -3,7 +3,7 @@
   "name": "GitHub Repository Size",
   "description": "Displays the size of a GitHub repository on its homepage",
   "author": "Pranav Mangal",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage_url": "https://github.com/pranavmangal/github-repo-size",
   "browser_specific_settings": {
     "gecko": {
@@ -13,7 +13,11 @@
       "id": "github-repository-size@pranavmangal"
     }
   },
-  "permissions": ["activeTab", "*://*.github.com/*"],
+  "permissions": ["activeTab", "storage", "*://*.github.com/*"],
+  "browser_action": {
+    "default_title": "GitHub Repository Size Options",
+    "default_popup": "popup/popup.html"
+  },
   "content_scripts": [
     {
       "matches": ["*://*.github.com/*"],

@@ -1,3 +1,5 @@
+const tokenStorageKey = "grsToken";
+
 function fileZipSVG(forSidebar) {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -89,7 +91,45 @@ function addToSidebar(value, unit) {
   }
 }
 
-function init() {
+function getGitHubAccessToken() {
+  return new Promise((resolve) => {
+    browser.storage.sync.get(tokenStorageKey, function (result) {
+      resolve(result[tokenStorageKey]);
+    });
+  });
+}
+
+async function fetchRepoSize(username, reponame) {
+  const token = await getGitHubAccessToken();
+  const apiUrl = `https://api.github.com/repos/${username}/${reponame}`;
+
+  const headers = { Accept: "application/vnd.github.v3+json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(apiUrl, { headers });
+    if (!response.ok) {
+      switch (response.status) {
+        case 403:
+          throw new Error("Forbidden to access this GitHub repository");
+        case 404:
+          throw new Error("The GitHub repository was not found");
+        default:
+          throw new Error(`Network response error: ${response.status}`);
+      }
+    }
+
+    const data = await response.json();
+    return data.size;
+  } catch (error) {
+    console.error("Unable to fetch repository size:", error);
+    return null;
+  }
+}
+
+async function init() {
   const pathParts = window.location.pathname.split("/");
 
   // Check if the URL matches the GitHub repo format
@@ -97,28 +137,15 @@ function init() {
     const username = pathParts[1];
     const reponame = pathParts[2];
 
-    const apiUrl = `https://api.github.com/repos/${username}/${reponame}`;
+    const repoSize = await fetchRepoSize(username, reponame);
+    if (repoSize != null) {
+      const [val, unit] = sizeFormat(repoSize);
 
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response error");
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        const repoSize = data.size;
-        const [val, unit] = sizeFormat(repoSize);
-
-        // Desktop view
-        addToSidebar(val, unit);
-        // Mobile view
-        addToDetailsList(val, unit);
-      })
-      .catch((error) => {
-        console.error("Unable to fetch repo size", error);
-      });
+      // Desktop view
+      addToSidebar(val, unit);
+      // Mobile view
+      addToDetailsList(val, unit);
+    }
   }
 }
 
