@@ -1,5 +1,8 @@
 const tokenStorageKey = "grsToken";
 
+const listSizeElemId = "gh-repo-size-list";
+const sideBarSizeElemId = "gh-repo-size-sidebar";
+
 function fileZipSVG(forSidebar) {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -33,6 +36,7 @@ function sizeFormat(sizeInKB) {
 
 function listRepoSize(value, unit) {
   const anchor = document.createElement("a");
+  anchor.id = listSizeElemId;
   anchor.className = "Link--secondary no-underline d-block mr-2";
 
   const valueElem = document.createElement("strong");
@@ -51,6 +55,9 @@ function listRepoSize(value, unit) {
 }
 
 function addToDetailsList(value, unit) {
+  const sizeElem = document.getElementById(listSizeElemId);
+  if (sizeElem) return;
+
   const activity = document
     .querySelector(".Link--secondary .octicon-pulse")
     .closest("a");
@@ -63,6 +70,7 @@ function addToDetailsList(value, unit) {
 
 function sidebarRepoSize(value, unit) {
   const sizeContainer = document.createElement("div");
+  sizeContainer.id = sideBarSizeElemId;
   sizeContainer.className = "mt-2";
 
   const anchor = document.createElement("a");
@@ -81,6 +89,9 @@ function sidebarRepoSize(value, unit) {
 }
 
 function addToSidebar(value, unit) {
+  const sizeElem = document.getElementById(sideBarSizeElemId);
+  if (sizeElem) return;
+
   const forks = document
     .querySelector(".BorderGrid .octicon-repo-forked")
     .closest(".mt-2");
