@@ -1,7 +1,7 @@
-const tokenStorageKey = "grsToken";
+const GH_TOKEN_KEY = "grsToken";
 
-const listSizeElemId = "gh-repo-size-list";
-const sideBarSizeElemId = "gh-repo-size-sidebar";
+const LIST_SIZE_ELEM_ID = "gh-repo-size-list";
+const SIDEBAR_SIZE_ELEM_ID = "gh-repo-size-sidebar";
 
 function fileZipSVG(forSidebar) {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -24,19 +24,23 @@ function fileZipSVG(forSidebar) {
   return svg;
 }
 
-function sizeFormat(sizeInKB) {
-  if (sizeInKB < 1024) return [sizeInKB, "KB"];
+function formattedSize(sizeInKB) {
+  const units = ["KB", "MB", "GB", "TB"];
 
-  sizeInKB /= 1024;
-  if (sizeInKB < 1024) return [sizeInKB.toFixed(2), "MB"];
+  let size = sizeInKB;
+  let i = 0;
 
-  sizeInKB /= 1024;
-  return [sizeInKB.toFixed(2), "GB"];
+  while (size >= 1024 && i < units.length - 1) {
+    size /= 1024;
+    i++;
+  }
+
+  return [i === 0 ? size : size.toFixed(2), units[i]];
 }
 
 function listRepoSize(value, unit) {
   const anchor = document.createElement("a");
-  anchor.id = listSizeElemId;
+  anchor.id = LIST_SIZE_ELEM_ID;
   anchor.className = "Link--secondary no-underline d-block mr-2";
 
   const valueElem = document.createElement("strong");
@@ -55,7 +59,7 @@ function listRepoSize(value, unit) {
 }
 
 function addToDetailsList(value, unit) {
-  const sizeElem = document.getElementById(listSizeElemId);
+  const sizeElem = document.getElementById(LIST_SIZE_ELEM_ID);
   if (sizeElem) return;
 
   const activity = document
@@ -70,7 +74,7 @@ function addToDetailsList(value, unit) {
 
 function sidebarRepoSize(value, unit) {
   const sizeContainer = document.createElement("div");
-  sizeContainer.id = sideBarSizeElemId;
+  sizeContainer.id = SIDEBAR_SIZE_ELEM_ID;
   sizeContainer.className = "mt-2";
 
   const anchor = document.createElement("a");
@@ -89,7 +93,7 @@ function sidebarRepoSize(value, unit) {
 }
 
 function addToSidebar(value, unit) {
-  const sizeElem = document.getElementById(sideBarSizeElemId);
+  const sizeElem = document.getElementById(SIDEBAR_SIZE_ELEM_ID);
   if (sizeElem) return;
 
   const forks = document
@@ -104,8 +108,8 @@ function addToSidebar(value, unit) {
 
 function getGitHubAccessToken() {
   return new Promise((resolve) => {
-    browser.storage.sync.get(tokenStorageKey, function (result) {
-      resolve(result[tokenStorageKey]);
+    browser.storage.sync.get(GH_TOKEN_KEY, function (result) {
+      resolve(result[GH_TOKEN_KEY]);
     });
   });
 }
@@ -141,16 +145,14 @@ async function fetchRepoSize(username, reponame) {
 }
 
 async function init() {
-  const pathParts = window.location.pathname.split("/").filter(Boolean);
-
   // Check if the URL matches the GitHub repo format
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
   if (pathParts.length === 2) {
-    const username = pathParts[0];
-    const reponame = pathParts[1];
-
+    const [username, reponame] = pathParts;
     const repoSize = await fetchRepoSize(username, reponame);
+
     if (repoSize != null) {
-      const [val, unit] = sizeFormat(repoSize);
+      const [val, unit] = formattedSize(repoSize);
 
       // Desktop view
       addToSidebar(val, unit);
