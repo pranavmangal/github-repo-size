@@ -141,12 +141,12 @@ async function fetchRepoSize(username, reponame) {
 }
 
 async function init() {
-  const pathParts = window.location.pathname.split("/");
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
 
   // Check if the URL matches the GitHub repo format
-  if (pathParts.length === 3 && pathParts[1] && pathParts[2]) {
-    const username = pathParts[1];
-    const reponame = pathParts[2];
+  if (pathParts.length === 2) {
+    const username = pathParts[0];
+    const reponame = pathParts[1];
 
     const repoSize = await fetchRepoSize(username, reponame);
     if (repoSize != null) {
