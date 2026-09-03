@@ -39,32 +39,30 @@ function formattedSize(sizeInKB) {
 }
 
 function listRepoSize(value, unit) {
+  const li = document.createElement("li");
+  li.id = LIST_SIZE_ELEM_ID;
+
   const anchor = document.createElement("a");
-  anchor.id = LIST_SIZE_ELEM_ID;
-  anchor.className = "Link--secondary no-underline d-block mr-2";
+  anchor.className = "d-block mr-2 Link--muted";
 
-  const valueElem = document.createElement("strong");
-  valueElem.className = "color-fg-default";
-  valueElem.textContent = ` ${value}`;
-
-  const unitElem = document.createElement("span");
-  unitElem.className = "color-fg-muted";
-  unitElem.textContent = ` ${unit}`;
+  const valueElem = document.createElement("span");
+  valueElem.className = "text-bold";
+  valueElem.textContent = `${value}`;
 
   anchor.appendChild(fileZipSVG({ forSidebar: false }));
   anchor.appendChild(valueElem);
-  anchor.appendChild(unitElem);
+  anchor.appendChild(document.createTextNode(` ${unit}`));
 
-  return anchor;
+  li.appendChild(anchor);
+  return li;
 }
 
 function addToDetailsList(value, unit) {
   const sizeElem = document.getElementById(LIST_SIZE_ELEM_ID);
   if (sizeElem) return;
 
-  const activity = document
-    .querySelector(".Link--secondary .octicon-pulse")
-    .closest("a");
+  const activityLink = document.querySelectorAll('li a[href$="/pulse"]')[1];
+  const activity = activityLink?.closest("li");
 
   if (activity) {
     const sizeElem = listRepoSize(value, unit);
@@ -81,7 +79,7 @@ function sidebarRepoSize(value, unit) {
   anchor.className = "Link Link--muted";
 
   const valueElem = document.createElement("strong");
-  valueElem.textContent = ` ${value}`;
+  valueElem.textContent = value;
 
   anchor.appendChild(fileZipSVG({ forSidebar: true }));
   anchor.appendChild(valueElem);
@@ -96,9 +94,9 @@ function addToSidebar(value, unit) {
   const sizeElem = document.getElementById(SIDEBAR_SIZE_ELEM_ID);
   if (sizeElem) return;
 
-  const forks = document
-    .querySelector(".BorderGrid .octicon-repo-forked")
-    .closest(".mt-2");
+  const forks = Array.from(
+    document.querySelectorAll('a[href$="/forks"]'),
+  ).find((el) => el.closest(".mt-2"));
 
   if (forks) {
     const sizeElem = sidebarRepoSize(value, unit);
